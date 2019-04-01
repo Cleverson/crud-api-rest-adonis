@@ -17,7 +17,6 @@ class SignIn extends Component {
 	handleSignIn = async e => {
 		e.preventDefault()
 		const { email, password } = this.state
-
 		if (!email || !password) {
 			this.setState({ error: 'Preencha e-mail e senha para continuar!' })
 		} else {

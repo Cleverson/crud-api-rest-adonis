@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
 
+import Logo from '../../assets/airbnb-logo.svg'
+
 import api from '../../services/api'
 
-import Logo from '../../assets/airbnb-logo.svg'
-import { Conteiner, Form } from './styles'
+import { Form, Container } from './styles'
 
 class SignUp extends Component {
 	state = {
@@ -16,19 +17,17 @@ class SignUp extends Component {
 
 	handleSignUp = async e => {
 		e.preventDefault()
-
 		const { username, email, password } = this.state
-
 		if (!username || !email || !password) {
 			this.setState({
-				error: 'Preencha todos os campos para se cadastrar.'
+				error: 'Preencha todos os dados para se cadastrar'
 			})
 		} else {
 			try {
 				await api.post('/users', { username, email, password })
 				this.props.history.push('/')
-			} catch (error) {
-				console.log(error)
+			} catch (err) {
+				console.log(err)
 				this.setState({
 					error: 'Ocorreu um erro ao registrar sua conta. T.T'
 				})
@@ -38,7 +37,7 @@ class SignUp extends Component {
 
 	render() {
 		return (
-			<Conteiner>
+			<Container>
 				<Form onSubmit={this.handleSignUp}>
 					<img src={Logo} alt="Airbnb logo" />
 					{this.state.error && <p>{this.state.error}</p>}
@@ -61,11 +60,11 @@ class SignUp extends Component {
 							this.setState({ password: e.target.value })
 						}
 					/>
-					<button type="submit">Cadastrar</button>
+					<button type="submit">Cadastrar grátis</button>
 					<hr />
-					<Link to="/">Fazer Login</Link>
+					<Link to="/">Fazer login</Link>
 				</Form>
-			</Conteiner>
+			</Container>
 		)
 	}
 }
