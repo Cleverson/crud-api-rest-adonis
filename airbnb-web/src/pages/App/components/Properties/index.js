@@ -10,16 +10,15 @@ const intlMonetary = new Intl.NumberFormat('pt-BR', {
 	currency: 'BRL',
 	minimumFractionDigits: 2
 })
-
 const Properties = ({ properties, match }) =>
 	properties.map(property => (
 		<Marker
 			key={property.id}
-			longitude={property.longitude}
-			latitude={property.latitude}>
+			longitude={parseInt(property.longitude)}
+			latitude={parseInt(property.latitude)}>
 			<Pin>
 				<Link to={`${match.url}/property/${property.id}`}>
-					{intlMonetary.format(property.price)}
+					{intlMonetary.format(parseInt(property.price))}
 				</Link>
 			</Pin>
 		</Marker>
@@ -30,9 +29,9 @@ Properties.propTypes = {
 		PropTypes.shape({
 			id: PropTypes.number,
 			title: PropTypes.string,
-			price: PropTypes.number,
-			longitude: PropTypes.number,
-			latitude: PropTypes.number
+			price: parseInt(PropTypes.number),
+			longitude: parseInt(PropTypes.number),
+			latitude: parseInt(PropTypes.number)
 		})
 	).isRequired,
 	match: PropTypes.shape({
