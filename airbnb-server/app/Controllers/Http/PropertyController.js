@@ -1,9 +1,17 @@
 'use strict'
 
+const Helpers = use('Helpers')
 const Property = use('App/Models/Property')
 
+/**
+ * Resourceful controller for interacting with properties
+ */
 class PropertyController {
-  async index({ request }) {
+  /**
+   * Show a list of all properties.
+   * GET properties
+   */
+  async index({ request, response }) {
     const { latitude, longitude } = request.all()
 
     const properties = Property.query()
@@ -14,6 +22,10 @@ class PropertyController {
     return properties
   }
 
+  /**
+   * Create/save a new property.
+   * POST properties
+   */
   async store({ auth, request, response }) {
     const { id } = auth.user
     const data = request.only([
@@ -25,9 +37,14 @@ class PropertyController {
     ])
 
     const property = await Property.create({ ...data, user_id: id })
+
     return property
   }
 
+  /**
+   * Display a single property.
+   * GET properties/:id
+   */
   async show({ params }) {
     const property = await Property.findOrFail(params.id)
 
@@ -36,6 +53,10 @@ class PropertyController {
     return property
   }
 
+  /**
+   * Update property details.
+   * PUT or PATCH properties/:id
+   */
   async update({ params, request, response }) {
     const property = await Property.findOrFail(params.id)
 
@@ -54,11 +75,17 @@ class PropertyController {
     return property
   }
 
-  async destroy({ params, request, response }) {
+  /**
+   * Delete a property with id.
+   * DELETE properties/:id
+   */
+  async destroy({ params, auth, response }) {
     const property = await Property.findOrFail(params.id)
-    if (property.user_id !== auth.user_id) {
-      return response.status(401).sen({ error: 'Not Authorized' })
+
+    if (property.user_id !== auth.user.id) {
+      return response.status(401).send({ error: 'Not authorized' })
     }
+
     await property.delete()
   }
 }

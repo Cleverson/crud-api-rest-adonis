@@ -1,37 +1,37 @@
-import React, { Component, Fragment } from 'react'
-import Dimensions from 'react-dimensions'
-import { withRouter } from 'react-router-dom'
-import { ModalRoute } from 'react-router-modal'
-import MapGL from 'react-map-gl'
-import PropTypes from 'prop-types'
-import debounce from 'lodash/debounce'
+import React, { Component, Fragment } from "react";
+import Dimensions from "react-dimensions";
+import { withRouter } from "react-router-dom";
+import { ModalRoute } from "react-router-modal";
+import MapGL from "react-map-gl";
+import PropTypes from "prop-types";
+import debounce from "lodash/debounce";
 
-import api from '../../services/api'
-import { logout } from '../../services/auth'
+import api from "../../services/api";
+import { logout } from "../../services/auth";
 
-import Properties from './components/Properties'
-import Button from './components/Button'
+import Properties from "./components/Properties";
+import Button from "./components/Button";
 
-import AddProperty from '../AddProperty'
-import Property from '../Property'
+import AddProperty from "../AddProperty";
+import Property from "../Property";
 
-import { Container, ButtonContainer, PointReference } from './styles'
+import { Container, ButtonContainer, PointReference } from "./styles";
 
 const TOKEN =
-	'pk.eyJ1IjoiY2xldmVyc29uc2RpYXMiLCJhIjoiY2p0eWJtNGhmMnJ5eDQxcGM3cml0eGdndiJ9.ESXQ8hgTi1x94ELOPIXyNg'
+	"pk.eyJ1IjoiaGlnb3JvY2tldCIsImEiOiJjamlrdWJuY3gyaHYxM3Bvbmg0cGRwY3R0In0._TdjX9rYrjZ6Q6FFXOGwsQ";
 
 class Map extends Component {
 	static propTypes = {
 		containerWidth: PropTypes.number.isRequired,
 		containerHeight: PropTypes.number.isRequired
-	}
+	};
 
 	constructor() {
-		super()
+		super();
 		this.updatePropertiesLocalization = debounce(
 			this.updatePropertiesLocalization,
 			500
-		)
+		);
 	}
 
 	state = {
@@ -44,58 +44,57 @@ class Map extends Component {
 		},
 		properties: [],
 		addActivate: false
-	}
+	};
 
 	componentDidMount() {
-		this.loadProperties()
+		this.loadProperties();
 	}
 
 	updatePropertiesLocalization() {
-		this.loadProperties()
+		this.loadProperties();
 	}
 
 	loadProperties = async () => {
-		const { latitude, longitude } = this.state.viewport
+		const { latitude, longitude } = this.state.viewport;
 		try {
-			const response = await api.get('/properties', {
+			const response = await api.get("/properties", {
 				params: { latitude, longitude }
-			})
-			this.setState({ properties: response.data })
+			});
+			this.setState({ properties: response.data });
 		} catch (err) {
-			console.log(err)
+			console.log(err);
 		}
-	}
+	};
 
 	handleLogout = e => {
-		logout()
-		this.props.history.push('/')
-	}
+		logout();
+		this.props.history.push("/");
+	};
 
 	handleAddProperty = () => {
-		const { match, history } = this.props
-		const { latitude, longitude } = this.state.viewport
+		const { match, history } = this.props;
+		const { latitude, longitude } = this.state.viewport;
 		history.push(
-			`${
-				match.url
-			}/properties/add?latitude=${latitude}&longitude=${longitude}`
-		)
+			`${match.url}/properties/add?latitude=${latitude}&longitude=${longitude}`
+		);
 
-		this.setState({ addActivate: false })
-	}
+		this.setState({ addActivate: false });
+	};
 
 	renderActions() {
 		return (
 			<ButtonContainer>
 				<Button
 					color="#fc6963"
-					onClick={() => this.setState({ addActivate: true })}>
+					onClick={() => this.setState({ addActivate: true })}
+				>
 					<i className="fa fa-plus" />
 				</Button>
 				<Button color="#222" onClick={this.handleLogout}>
 					<i className="fa fa-times" />
 				</Button>
 			</ButtonContainer>
-		)
+		);
 	}
 
 	renderButtonAdd() {
@@ -106,18 +105,17 @@ class Map extends Component {
 					<div>
 						<button onClick={this.handleAddProperty} type="button">
 							Adicionar
-						</button>
+            </button>
 						<button
-							onClick={() =>
-								this.setState({ addActivate: false })
-							}
-							className="cancel">
+							onClick={() => this.setState({ addActivate: false })}
+							className="cancel"
+						>
 							Cancelar
-						</button>
+            </button>
 					</div>
 				</PointReference>
 			)
-		)
+		);
 	}
 
 	render() {
@@ -125,8 +123,8 @@ class Map extends Component {
 			containerWidth: width,
 			containerHeight: height,
 			match
-		} = this.props
-		const { properties, addActivate } = this.state
+		} = this.props;
+		const { properties, addActivate } = this.state;
 		return (
 			<Fragment>
 				<MapGL
@@ -136,12 +134,9 @@ class Map extends Component {
 					mapStyle="mapbox://styles/mapbox/dark-v9"
 					mapboxApiAccessToken={TOKEN}
 					onViewportChange={viewport => this.setState({ viewport })}
-					onViewStateChange={this.updatePropertiesLocalization.bind(
-						this
-					)}>
-					{!addActivate && (
-						<Properties match={match} properties={properties} />
-					)}
+					onViewStateChange={this.updatePropertiesLocalization.bind(this)}
+				>
+					{!addActivate && <Properties match={match} properties={properties} />}
 				</MapGL>
 				{this.renderButtonAdd()}
 				{this.renderActions()}
@@ -156,15 +151,15 @@ class Map extends Component {
 					component={Property}
 				/>
 			</Fragment>
-		)
+		);
 	}
 }
 
-const DimensionedMap = withRouter(Dimensions()(Map))
+const DimensionedMap = withRouter(Dimensions()(Map));
 const App = () => (
 	<Container>
 		<DimensionedMap />
 	</Container>
-)
+);
 
-export default App
+export default App;
